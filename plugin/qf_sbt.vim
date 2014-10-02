@@ -41,7 +41,7 @@ function! SbtStart(...) abort " {{{
 
 	echo 'starting sbt...'
 	execute 'lcd ' . info.path
-	let proc = s:CProc.new(['sbt', '-J-Dsbt.log.format=false'] + precommands + ['~compile'])
+	let proc = s:CProc.new(['sbt', '-J-Dsbt.log.format=false'] + precommands + ['~test:compile'])
 	let s:procs[info.path] = proc
 	lcd -
 endfunction " }}}
