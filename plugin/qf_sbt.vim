@@ -10,6 +10,7 @@ command! SbtStop   call SbtStop()
 command! SbtClean  call SbtClean()
 command! SbtUpdate call SbtUpdateQf()
 command! SbtRestart call SbtRestart()
+command! SbtLog    echo join(SbtGetProc().log, "\n")
 
 augroup qf_sbt
 	autocmd!
