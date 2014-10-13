@@ -174,6 +174,9 @@ endfunction " }}}
 				throw "Invalid state: " . self.state
 			endif
 		endfor
+		if self.proc.stdout.buffer =~# '\V\^Project loading failed: (r)etry, (q)uit, (l)ast, or (i)gnore?'
+			call self.proc.stdin.write("q\n")
+		endif
 		return lines
 	endfunction " }}}
 	function! s:CProc.set_qf() dict abort " {{{
