@@ -67,12 +67,11 @@ endfunction " }}}
 
 function! SbtStop() abort " {{{
 	let proc = s:getProc()
-	if !s:is_valid(proc)
-		return
+	if s:is_valid(proc)
+		echo 'stopping sbt...'
+		call proc.kill()
 	endif
-
-	echo 'stopping sbt...'
-	call proc.kill()
+	call s:releaseProc()
 endfunction " }}}
 
 function! SbtUpdateState() abort " {{{
@@ -91,6 +90,11 @@ endfunction " }}}
 function! s:getProc() abort " {{{
 	let info = CurrentProjectInfo()
 	return get(s:procs, info.path, {})
+endfunction " }}}
+
+function! s:releaseProc() abort " {{{
+	let info = CurrentProjectInfo()
+	call remove(s:procs, info.path)
 endfunction " }}}
 
 " Class system
