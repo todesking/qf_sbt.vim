@@ -41,7 +41,7 @@ function! SbtStart(...) abort " {{{
 
 	echo 'starting sbt...'
 	execute 'lcd ' . info.path
-	let proc = s:CProc.new(['sbt', '-J-Dsbt.log.format=false'] + precommands + ['~test:compile'])
+	let proc = s:CProc.new(['sbt', '-J-Dsbt.log.format=false', 'set target := new java.io.File(baseDirectory.value, "target/qf-sbt")'] + precommands + ['~test:compile'])
 	let s:procs[info.path] = proc
 	lcd -
 endfunction " }}}
@@ -94,7 +94,9 @@ endfunction " }}}
 
 function! s:releaseProc() abort " {{{
 	let info = CurrentProjectInfo()
-	call remove(s:procs, info.path)
+	if has_key(s:procs, info.path)
+		call remove(s:procs, info.path)
+	endif
 endfunction " }}}
 
 " Class system
