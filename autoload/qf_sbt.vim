@@ -34,18 +34,6 @@ function! qf_sbt#start(...) abort " {{{
 	lcd -
 endfunction " }}}
 
-function! qf_sbt#update_qf() abort " {{{
-	let proc = s:getProc()
-	if !qf_sbt#is_valid(proc)
-		echo 'sbt not started'
-		return
-	endif
-	call proc.update()
-	call proc.set_qf()
-	echo 'State: ' . proc.state
-	return proc.state
-endfunction " }}}
-
 function! qf_sbt#stop() abort " {{{
 	let proc = s:getProc()
 	if qf_sbt#is_valid(proc)
