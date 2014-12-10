@@ -32,7 +32,7 @@ endfunction " }}}
 
 function! SbtStart(...) abort " {{{
 	let precommands = a:000
-	let info = CurrentProjectInfo()
+	let info = current_project#info()
 	let proc = s:getProc()
 	if s:is_valid(proc)
 		echo "sbt already started"
@@ -88,12 +88,12 @@ function! SbtGetProc() abort " {{{
 endfunction " }}}
 
 function! s:getProc() abort " {{{
-	let info = CurrentProjectInfo()
+	let info = current_project#info()
 	return get(s:procs, info.path, {})
 endfunction " }}}
 
 function! s:releaseProc() abort " {{{
-	let info = CurrentProjectInfo()
+	let info = current_project#info()
 	if has_key(s:procs, info.path)
 		call remove(s:procs, info.path)
 	endif
