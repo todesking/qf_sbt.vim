@@ -8,5 +8,5 @@ command! SbtLog    echo join(qf_sbt#get_proc().log, "\n")
 
 augroup qf_sbt
 	autocmd!
-	autocmd QuitPre * call qf_sbt.quit_all()
+	autocmd QuitPre * call qf_sbt#quit_all()
 augroup END
