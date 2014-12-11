@@ -51,6 +51,19 @@ function! qf_sbt#is_valid(proc) abort " {{{
 	return !empty(a:proc) && a:proc.is_valid()
 endfunction " }}}
 
+function! qf_sbt#all_procs() abort " {{{
+	return s:procs
+endfunction " }}}
+
+function! qf_sbt#list_procs() abort " {{{
+	let home = fnamemodify('~', ':p')
+	for key in keys(s:procs)
+		let proc = s:procs[key]
+		let path = substitute(key, '^\V' . escape(home, '\'), '~', '')
+		echo printf('%40s %-10s %s', path . ':', proc.state, join(proc.command, ' '))
+	endfor
+endfunction " }}}
+
 function! s:getProc() abort " {{{
 	let info = current_project#info()
 	return get(s:procs, info.path, {})

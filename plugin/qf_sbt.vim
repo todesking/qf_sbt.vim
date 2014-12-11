@@ -5,6 +5,7 @@ command! SbtStop   call qf_sbt#stop()
 command! SbtClean  call qf_sbt#clean()
 command! SbtRestart call qf_sbt#restart()
 command! SbtLog    echo join(qf_sbt#get_proc().log, "\n")
+command! SbtList   call qf_sbt#list_procs()
 
 augroup qf_sbt
 	autocmd!
