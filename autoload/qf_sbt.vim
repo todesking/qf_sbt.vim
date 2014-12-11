@@ -59,6 +59,7 @@ function! qf_sbt#list_procs() abort " {{{
 	let home = fnamemodify('~', ':p')
 	for key in keys(s:procs)
 		let proc = s:procs[key]
+		call proc.update()
 		let path = substitute(key, '^\V' . escape(home, '\'), '~', '')
 		echo printf('%-40s %-10s %s', path, proc.state, proc.build_status_string)
 	endfor

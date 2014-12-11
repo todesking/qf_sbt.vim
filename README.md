@@ -24,9 +24,11 @@ All operations are based on current buffer's project root.
 
 * `SbtStart`
 * `SbtStop`
-* `SbtRestart`
 * `SbtClean`
+* `SbtRestart`
 * `SbtLog`
+* `SbtList`
+* `SbtSetQf`
 
 ### Vimrc example
 
