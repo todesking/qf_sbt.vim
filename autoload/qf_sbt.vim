@@ -60,7 +60,7 @@ function! qf_sbt#list_procs() abort " {{{
 	for key in keys(s:procs)
 		let proc = s:procs[key]
 		let path = substitute(key, '^\V' . escape(home, '\'), '~', '')
-		echo printf('%40s %-10s %s', path . ':', proc.state, join(proc.command, ' '))
+		echo printf('%-40s %-10s %s', path, proc.state, join(proc.command, ' '))
 	endfor
 endfunction " }}}
 
