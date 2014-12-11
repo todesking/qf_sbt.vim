@@ -48,7 +48,6 @@ function! Vimrc_build_status() abort " {{{
 			if build_number < proc.last_build_number
 				call proc.set_qf() " Set build result to quickfix
 			endif
-			call  Vimrc_sync_qf_to_syntastic()
 			let b:vimrc_build_status_last_updated = reltime()
 		endif
 		return proc.build_status_string
