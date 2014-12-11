@@ -109,17 +109,14 @@ endfunction " }}}
 	endfunction " }}}
 	function! s:CProc.update() dict abort " {{{
 		let lines = self.proc.stdout.read_lines(-1, 20)
-		let self.log = self.log + lines
-		let max_log_size = 10
-		if len(self.log) > max_log_size
-			let self.log = self.log[(-max_log_size):-1]
-		endif
 		for l in lines
 			if get(g:, 'sbt_qf_debug', 0)
 				echo l
 			endif
+			call add(self.log, l)
 			if self.state == 'idle' || self.state == 'startup'
 				if l =~# '\v^\[info\] Compiling '
+					let self.log = [l]
 					let self.state = 'compile'
 				elseif l =~# '\v^\[success\] Total time\:.*completed.*'
 					let self.last_build_number += 1
@@ -141,7 +138,7 @@ endfunction " }}}
 						let self.last_compile_result = 'error'
 					endif
 				else
-					call add(self._buf, l)
+					call add(self.log, l)
 				endif
 			else
 				throw "Invalid state: " . self.state
