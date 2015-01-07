@@ -112,7 +112,7 @@ endfunction " }}}
 		let self.last_build_number = 0
 
 		let self.build_status_version = 0
-		let self.build_status_string = ''
+		let self.build_status_string = '...'
 	endfunction " }}}
 	function! s:CProc.is_valid() dict abort " {{{
 		return self.proc.checkpid()[0] == 'run'
