@@ -5,10 +5,10 @@ if !exists('s:procs')
 	let s:procs = {}
 endif
 
-function! qf_sbt#restart() abort " {{{
+function! qf_sbt#restart(...) abort " {{{
 	call qf_sbt#stop()
 	sleep 1000m
-	call qf_sbt#start()
+	call call('qf_sbt#start', a:000)
 endfunction " }}}
 
 function! qf_sbt#quit_all() abort " {{{
@@ -16,6 +16,10 @@ function! qf_sbt#quit_all() abort " {{{
 		call s:procs[path].kill()
 		call remove(s:procs, path)
 	endfor
+endfunction " }}}
+
+function! qf_sbt#clean() abort " {{{
+	call qf_sbt#restart('clean')
 endfunction " }}}
 
 function! qf_sbt#start(...) abort " {{{
