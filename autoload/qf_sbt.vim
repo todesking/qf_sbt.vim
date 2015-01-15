@@ -33,7 +33,7 @@ function! qf_sbt#start(...) abort " {{{
 
 	echo 'starting sbt...'
 	execute 'lcd ' . info.path
-	let proc = s:CProc.new(['sbt', '-J-Dsbt.log.format=false', 'set target <<= baseDirectory.apply {bd => new java.io.File(bd, "target/qf-sbt")}'] + precommands + ['~test:compile'])
+	let proc = s:CProc.new(info.path, ['sbt', '-J-Dsbt.log.format=false', 'set target <<= baseDirectory.apply {bd => new java.io.File(bd, "target/qf-sbt")}'] + precommands + ['~test:compile'])
 	let s:procs[info.path] = proc
 	lcd -
 endfunction " }}}
@@ -67,6 +67,29 @@ function! qf_sbt#list_procs() abort " {{{
 		let path = substitute(key, '^\V' . escape(home, '\'), '~', '')
 		echo printf('%-40s %-10s %s', path, proc.state, proc.build_status_string)
 	endfor
+endfunction " }}}
+
+function! qf_sbt#status_string(options) abort " {{{
+	let proc = qf_sbt#get_proc()
+	if empty(proc) " sbt not started
+		return ''
+	elseif !qf_sbt#is_valid(proc) " sbt started, but died unexpectedly.
+		return '(>_<)'
+	else
+		" throttle for prevent too many updates
+		if !exists('b:qf_sbt_status_string_updated')
+			let b:qf_sbt_status_string_updated = reltime()
+		endif
+		if str2float(reltimestr(reltime(b:qf_sbt_status_string_updated))) > 0.5
+			let build_number = proc.last_build_number
+			call proc.update()
+			if build_number < proc.last_build_number
+				call proc.set_qf() " Set build result to quickfix
+			endif
+			let b:vimrc_build_status_last_updated = reltime()
+		endif
+		return proc.build_status_string
+	endif
 endfunction " }}}
 
 function! s:getProc() abort " {{{
@@ -105,7 +128,8 @@ endfunction " }}}
 
 " Class Proc {{{
 	let s:CProc = s:new_class()
-	function! s:CProc.initialize(cmd) dict abort " {{{
+	function! s:CProc.initialize(path, cmd) dict abort " {{{
+		let self.path = a:path
 		let self.command = a:cmd
 		let self.proc = vimproc#popen2(a:cmd)
 		let self.last_compile_events = []
