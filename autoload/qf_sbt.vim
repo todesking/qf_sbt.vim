@@ -69,29 +69,6 @@ function! qf_sbt#list_procs() abort " {{{
 	endfor
 endfunction " }}}
 
-function! qf_sbt#status_string(options) abort " {{{
-	let proc = qf_sbt#get_proc()
-	if empty(proc) " sbt not started
-		return ''
-	elseif !qf_sbt#is_valid(proc) " sbt started, but died unexpectedly.
-		return '(>_<)'
-	else
-		" throttle for prevent too many updates
-		if !exists('b:qf_sbt_status_string_updated')
-			let b:qf_sbt_status_string_updated = reltime()
-		endif
-		if str2float(reltimestr(reltime(b:qf_sbt_status_string_updated))) > 0.5
-			let build_number = proc.last_build_number
-			call proc.update()
-			if build_number < proc.last_build_number
-				call proc.set_qf() " Set build result to quickfix
-			endif
-			let b:vimrc_build_status_last_updated = reltime()
-		endif
-		return proc.build_status_string
-	endif
-endfunction " }}}
-
 function! s:getProc() abort " {{{
 	let info = current_project#info()
 	return get(s:procs, info.path, {})
@@ -193,20 +170,24 @@ endfunction " }}}
 		call self._update_build_status_string(lines)
 		return lines
 	endfunction " }}}
-	function! s:CProc.set_qf() dict abort " {{{
+	function! s:CProc.getqflist() dict abort " {{{
 		let message_width = 150
-		let qf_items = []
+		let items = []
 		let typecodes = {'error': 'E', 'warn': 'W'}
 		for ev in self.last_compile_events
-			call add(qf_items, {
+			call add(items, {
 			\ 'filename': ev.path,
 			\ 'lnum': ev.line,
-			\ 'text': "\n" . join(map(ev.message, 'join(split(v:val, "\\v.{,' . message_width . '}\\zs"), "\n")'), "\n"),
+			\ 'text': "\n" . join(map(ev.message, 'join(split(v:val, "\\v.{,' . message_width . '}\\zs"), " \n")'), " \n"),
 			\ 'type': typecodes[ev.type],
 			\ })
 		endfor
-		if getqflist() != qf_items
-			call setqflist(qf_items)
+		return items
+	endfunction " }}}
+	function! s:CProc.set_qf() dict abort " {{{
+		let items = self.getqflist()
+		if getqflist() != items
+			call setqflist(items)
 		endif
 	endfunction " }}}
 	function! s:CProc._update_build_status_string(messages) dict abort " {{{
