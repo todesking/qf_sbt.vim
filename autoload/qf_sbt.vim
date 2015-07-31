@@ -76,7 +76,7 @@ function! qf_sbt#list_procs() abort " {{{
 		let proc = s:procs[key]
 		call proc.update()
 		let path = substitute(key, '^\V' . escape(home, '\'), '~', '')
-		echo printf('%-40s %-10s %s', path, proc.state, proc.build_status_string)
+		echo printf('%-40s %10d %-10s %s', path, proc.proc.pid, proc.state, proc.build_status_string)
 	endfor
 endfunction " }}}
 
