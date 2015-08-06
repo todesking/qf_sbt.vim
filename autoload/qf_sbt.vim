@@ -7,6 +7,9 @@ endif
 if !exists('s:project_ids')
 	let s:project_ids = {}
 endif
+if !exists('g:qf_sbt_additional_args')
+	let g:qf_sbt_additional_args = []
+endif
 
 function! s:project_id_of(path) abort " {{{
 	if !has_key(s:project_ids, a:path)
@@ -44,7 +47,12 @@ function! qf_sbt#start(...) abort " {{{
 	echo 'starting sbt...'
 	execute 'lcd ' . info.path
 	let base_dir = "target/qf-sbt." . s:project_id_of(info.path)
-	let proc = s:CProc.new(info.path, ['sbt', '-J-Dsbt.log.format=false', 'set target <<= baseDirectory.apply {bd => new java.io.File(bd, "' . base_dir . '")}'] + precommands + ['~test:compile'])
+	let default_args = [
+	\ '-J-Dsbt.log.format=false',
+	\ 'set target <<= baseDirectory.apply {bd => new java.io.File(bd, "' . base_dir . '")}'
+	\ ]
+	let args = default_args + g:qf_sbt_additional_args
+	let proc = s:CProc.new(info.path, ['sbt'] + args + precommands + ['~test:compile'])
 	let s:procs[info.path] = proc
 	lcd -
 endfunction " }}}
