@@ -49,7 +49,7 @@ function! qf_sbt#start(...) abort " {{{
 	let base_dir = "target/qf-sbt." . s:project_id_of(info.path)
 	let default_args = [
 	\ '-J-Dsbt.log.format=false',
-	\ 'set target <<= baseDirectory.apply {bd => new java.io.File(bd, "' . base_dir . '")}'
+	\ 'set target := new java.io.File(baseDirectory.value, "' . base_dir . '")'
 	\ ]
 	let args = default_args + g:qf_sbt_additional_args
 	let proc = s:CProc.new(info.path, ['sbt'] + args + precommands + ['~test:compile'])
